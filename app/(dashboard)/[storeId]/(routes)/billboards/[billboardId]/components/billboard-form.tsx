@@ -64,6 +64,7 @@ export const BillboardForm: React.FC<BillboardFormPorps> = ({
         await axios.post(`/api/${params.storeId}/billboards`, data)
       }
       router.refresh()
+      router.push(`/${params.storeId}/billboards`)
       toast.success(toastMessage)
     }catch (error){
       console.log(error)
