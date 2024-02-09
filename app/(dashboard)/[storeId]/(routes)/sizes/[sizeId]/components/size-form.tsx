@@ -60,7 +60,6 @@ export const SizeForm: React.FC<SizeFormPorps> = ({
       }else{
         await axios.post(`/api/${params.storeId}/sizes`, data)
       }
-      router.refresh()
       router.push(`/${params.storeId}/sizes`)
       toast.success(toastMessage)
     }catch (error){
@@ -75,7 +74,6 @@ export const SizeForm: React.FC<SizeFormPorps> = ({
     try{
       setLoading(true)
       await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`)
-      router.refresh()
       router.push(`/${params.storeId}/sizes`)
       toast.success("Size deleted.")
     } catch(error){
