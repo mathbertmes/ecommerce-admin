@@ -4,22 +4,22 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action";
 
 
-export type CategoryColumn = {
+export type SubCategoryColumn = {
   id: string;
   name: string;
-  billboardLabel: string;
+  categoryName: string;
   createdAt: string;
 }
 
-export const columns: ColumnDef<CategoryColumn>[] = [
+export const columns: ColumnDef<SubCategoryColumn>[] = [
   {
     accessorKey: "name",
     header: "Name",
   },
   {
-    accessorKey: "billboard",
-    header: "Billboard",
-    cell: ({ row }) => row.original.billboardLabel
+    accessorKey: "categoryName",
+    header: "Primary Category",
+    cell: ({ row }) => row.original.categoryName
   },
   {
     accessorKey: "createdAt",
