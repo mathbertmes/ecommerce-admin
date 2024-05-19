@@ -4,8 +4,8 @@ import * as z from "zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { Category, Color, Image, Product, Size } from "@prisma/client"
+import { useEffect, useState } from "react";
+import { Category, Image, Product, SubCategory } from "@prisma/client"
 import { Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
@@ -25,14 +25,14 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import prismadb from "@/lib/prismadb";
 
 interface ProductFormPorps{
   initialData: Product & {
     images: Image[]
   } | null;
   categories: Category[];
-  colors: Color[];
-  sizes: Size[];
+  storeId: string;
 }
 
 const formSchema = z.object({
@@ -40,10 +40,10 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
-  colorId: z.string().min(1),
-  sizeId: z.string().min(1),
+  subCategoryId: z.string().min(1).optional(),
   isFeatured: z.boolean().default(false).optional(),
-  isArchived: z.boolean().default(false).optional(),
+  isArchived: z.boolean().default(false).optional()
+  
 })
 
 type ProductFormValues = z.infer<typeof formSchema>
@@ -51,9 +51,10 @@ type ProductFormValues = z.infer<typeof formSchema>
 export const ProductForm: React.FC<ProductFormPorps> = ({
   initialData,
   categories,
-  colors,
-  sizes
+  storeId
 }) => {
+  const [stateCategoryId, setStateCategoryId] = useState(initialData?.categoryId)
+  const [subCategoriesAvaliable, setSubCategoriesAvailable] = useState<SubCategory[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
@@ -76,8 +77,7 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
       images: [],
       price: 0,
       categoryId: '',
-      colorId: '',
-      sizeId: '',
+      subCategoryId: undefined,
       isFeatured: false,
       isArchived: false,
     }
@@ -114,6 +114,32 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
       setOpen(false)
     }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const subCategories = await prismadb.category.findMany({
+          where: {
+            storeId : storeId,
+            id: stateCategoryId
+          },
+        });
+        console.log(subCategories)
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    }
+
+    fetchData();
+  }, [stateCategoryId]);
+
+
+
+  const handleCategoryChange = (categoryId: string) => {
+    console.log(categoryId)
+    setStateCategoryId(categoryId);
+  };
+
 
   return(
     <>
@@ -189,15 +215,16 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
             />
              <FormField 
               control={form.control} 
-              name="categoryId"
+              name="categoryId"             
               render={({ field }) => (
-                <FormItem>
+                <FormItem onChange={() => handleCategoryChange(field.value)}>
                   <FormLabel>Category</FormLabel>
                   <Select 
                     disabled={loading} 
-                    onValueChange={field.onChange} 
+                    onValueChange={field.onChange}
                     value={field.value} 
                     defaultValue={field.value}
+                        
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -222,76 +249,43 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
                 </FormItem>
               )}
             />
+            
             <FormField 
               control={form.control} 
-              name="sizeId"
+              name="subCategoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Size</FormLabel>
-                  <Select 
-                    disabled={loading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue 
-                          defaultValue={field.value}
-                          placeholder="Select a size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((size) => (
-                        <SelectItem
-                          key={size.id}
-                          value={size.id}
-                        >
-                          {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Sub Category</FormLabel>
+                    <Select 
+                      disabled={loading} 
+                      onValueChange={field.onChange} 
+                      value={field.value} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue 
+                            defaultValue={field.value}
+                            placeholder="Select a sub category"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {subCategoriesAvaliable.map((individualSubCategory) => (
+                          <SelectItem
+                            key={individualSubCategory.id}
+                            value={individualSubCategory.id}
+                          >
+                            {individualSubCategory.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField 
-              control={form.control} 
-              name="colorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <Select 
-                    disabled={loading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue 
-                          defaultValue={field.value}
-                          placeholder="Select a color"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem
-                          key={color.id}
-                          value={color.id}
-                        >
-                          {color.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
             <FormField 
               control={form.control} 
               name="isFeatured"
