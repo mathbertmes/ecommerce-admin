@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import prismadb from "@/lib/prismadb";
+import { getSubCategories } from "@/actions/get-subCategories";
 
 interface ProductFormPorps{
   initialData: Product & {
@@ -40,7 +41,7 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
-  subCategoryId: z.string().min(1).optional(),
+  subCategoryId: z.string().min(1).optional().or(z.null().optional()),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional()
   
@@ -77,7 +78,7 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
       images: [],
       price: 0,
       categoryId: '',
-      subCategoryId: undefined,
+      subCategoryId: '',
       isFeatured: false,
       isArchived: false,
     }
@@ -115,30 +116,14 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
     }
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const subCategories = await prismadb.category.findMany({
-          where: {
-            storeId : storeId,
-            id: stateCategoryId
-          },
-        });
-        console.log(subCategories)
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      }
+  const handleCategoryChange = async (paramCategoryId: string) => {
+    try {
+      const response = await axios.get(`/api/${params.storeId}/categories/${paramCategoryId}/subcategories`)
+      setSubCategoriesAvailable(response.data);
+    } catch (error) {
+      console.error("Failed to fetch subcategories", error);
     }
-
-    fetchData();
-  }, [stateCategoryId]);
-
-
-
-  const handleCategoryChange = (categoryId: string) => {
-    console.log(categoryId)
-    setStateCategoryId(categoryId);
-  };
+  }
 
 
   return(
@@ -217,11 +202,15 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
               control={form.control} 
               name="categoryId"             
               render={({ field }) => (
-                <FormItem onChange={() => handleCategoryChange(field.value)}>
+                <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select 
                     disabled={loading} 
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleCategoryChange(value);
+                      console.log(value)
+                    }}
                     value={field.value} 
                     defaultValue={field.value}
                         
@@ -259,18 +248,23 @@ export const ProductForm: React.FC<ProductFormPorps> = ({
                     <Select 
                       disabled={loading} 
                       onValueChange={field.onChange} 
-                      value={field.value} 
-                      defaultValue={field.value}
+                      value={field.value ? field.value : ''} 
+                      defaultValue={field.value ? field.value : ''}
                     >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue 
-                            defaultValue={field.value}
+                            defaultValue={field.value ? field.value : ' '}
                             placeholder="Select a sub category"
                           />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        <SelectItem
+                          value={' '}
+                        >
+                          None
+                        </SelectItem>
                         {subCategoriesAvaliable.map((individualSubCategory) => (
                           <SelectItem
                             key={individualSubCategory.id}
