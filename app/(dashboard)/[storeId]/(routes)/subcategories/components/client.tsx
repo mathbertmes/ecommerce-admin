@@ -10,11 +10,11 @@ import { SubCategoryColumn, columns } from "./columns"
 import { DataTable } from "@/components/ui/data-table"
 import { ApiList } from "@/components/ui/api-list"
 
-interface CategoryClientProps{
+interface SubCategoryClientProps{
   data: SubCategoryColumn[]
 }
 
-export const CategoryClient: React.FC<CategoryClientProps> = ({
+export const CategoryClient: React.FC<SubCategoryClientProps> = ({
   data
 }) => {
   const router = useRouter()
@@ -36,10 +36,10 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({
       <DataTable searchKey="name" columns={columns} data={data}/>
       <Heading 
         title="API"
-        description="API calls for categories"
+        description="API calls for sub categories"
       />
       <Separator />
-      <ApiList entityName="categories" entityIdName="categoryId"/>
+      <ApiList entityName="subcategories" entityIdName="subCategoryId"/>
     </>
   )
 }
