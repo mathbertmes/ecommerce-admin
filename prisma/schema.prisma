@@ -96,7 +96,7 @@ model SizeStock{
   productId   String
   product     Product @relation(fields: [productId], references: [id])
   value       String
-  amount      String
+  amount      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
