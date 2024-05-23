@@ -94,7 +94,7 @@ model Product{
 model SizeStock{
   id          String @id @default(uuid())
   productId   String
-  product     Product @relation(fields: [productId], references: [id])
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   value       String
   amount      Int
   createdAt DateTime @default(now())
