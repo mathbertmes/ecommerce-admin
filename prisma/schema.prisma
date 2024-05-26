@@ -128,3 +128,13 @@ model OrderItem{
   productId String 
   product Product @relation(fields: [productId], references: [id])
 }
+
+model Sale{
+  id          String @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String
+  active      Boolean 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
