@@ -82,6 +82,8 @@ model Product{
   brand Brand? @relation("BrandToProduct", fields: [brandId], references: [id])
   name String
   price Decimal
+  discount Boolean @default(false)
+  discountPrice Decimal?
   isFeatured Boolean @default(false)
   isArchived Boolean @default(false)
   stock SizeStock[]
@@ -127,14 +129,4 @@ model OrderItem{
   order Order @relation(fields: [orderId], references: [id])
   productId String 
   product Product @relation(fields: [productId], references: [id])
-}
-
-model Sale{
-  id          String @id @default(uuid())
-  name        String
-  description String
-  imageUrl    String
-  active      Boolean 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }

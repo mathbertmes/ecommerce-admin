@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useFieldArray, useForm, Controller } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Brand, Category, Image, Product, SubCategory } from "@prisma/client";
@@ -19,8 +19,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import prismadb from "@/lib/prismadb";
-import { getSubCategories } from "@/actions/get-subCategories";
+
 
 interface ProductFormProps {
   initialData: (Product & { images: Image[] }) | null;
@@ -40,6 +39,8 @@ const formSchema = z.object({
   }).array().min(1, "Stock must contain at least 1 size"),
   subCategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
+  discount: z.boolean().default(false),
+  discountPrice: z.coerce.number().min(0.01, "Discount price is required").optional().nullable(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional()
 });
@@ -51,7 +52,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   categories,
   brands
 }) => {
-  const [stateCategoryId, setStateCategoryId] = useState(initialData?.categoryId);
+
   const [subCategoriesAvailable, setSubCategoriesAvailable] = useState<SubCategory[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: initialData ? {
       ...initialData,
-      price: parseFloat(String(initialData?.price))
+      price: parseFloat(String(initialData?.price)),
+      discountPrice : initialData?.discountPrice ?  parseFloat(String(initialData?.discountPrice)) : 0
     } : {
       name: '',
       images: [],
@@ -77,6 +79,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       stock: [],
       subCategoryId: '',
       brandId: '',
+      discountPrice: undefined,
+      discount: false,
       isFeatured: false,
       isArchived: false,
     }
@@ -299,6 +303,44 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </FormItem>
                 )}
               />
+              <FormField 
+                control={form.control} 
+                name="discount"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox 
+                        checked={field.value} 
+                        // @ts-ignore
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Discount
+                      </FormLabel>
+                      <FormDescription>
+                        Apply a discount for the product
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+           
+                <FormField 
+                control={form.control} 
+                name="discountPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount Price</FormLabel>
+                    <FormControl>
+                      <Input onChange={field.onChange} value={field.value ? field.value : undefined} type="number" disabled={loading} placeholder="9.99"  />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            
               <FormField 
                 control={form.control} 
                 name="isFeatured"
