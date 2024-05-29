@@ -16,15 +16,11 @@ import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { CellAction } from "./cell-action"
+import { SaleForm } from "./sale-form"
+import { Sale } from "@prisma/client"
 
 interface SaleClientProps{
-  data: {
-    id: string,
-    name: string,
-    description: string | null,
-    imageUrl: string | null,
-    active: boolean,
-  } | null
+  data: Sale | null
 }
 
 
@@ -54,9 +50,15 @@ export const SaleClient: React.FC<SaleClientProps> = ({
           </Button>
           </>
           ) : (
+            <>
+            <div className="flex items-center gap-2 border-2 py-2 px-4 border-green-600 rounded-3xl">
+              <div className="h-3 w-3 rounded-full bg-green-600"></div>
+              Active
+            </div>
             <Button >
             Desative
           </Button>
+          </>
           )}
           
           <Button onClick={() => router.push(`/${params.storeId}/brands/new`)}>
@@ -66,40 +68,7 @@ export const SaleClient: React.FC<SaleClientProps> = ({
         </div>
       </div>
       <Separator />
-      <div className="rounded-md border">
-      <Table>
-          <TableHeader>
-              <TableRow>             
-               
-                    <TableHead>
-                      Name
-                    </TableHead>
-                    <TableHead>
-                      Description
-                    </TableHead>
-                  
-              
-              </TableRow>
-           
-          </TableHeader>
-          <TableBody>
-                <TableRow
-                >
-                  
-                    <TableCell >
-                     {data?.name}
-                    </TableCell>
-                    <TableCell >
-                     {data?.description}
-                    </TableCell>
-                    
-               
-                </TableRow>
-              
-            
-          </TableBody>
-        </Table>
-        </div>
+          <SaleForm initialData={data}/>
       
     </>
   )

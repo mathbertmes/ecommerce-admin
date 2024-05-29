@@ -26,8 +26,8 @@ export async function POST(
         sale: {
           create: {
             name: "Sale",
-            description: "Sales",
-            imageUrl: "usu",
+            description: null,
+            imageUrl: null,
             active: false,
           }
         }
