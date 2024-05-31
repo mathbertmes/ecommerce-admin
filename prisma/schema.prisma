@@ -79,6 +79,8 @@ model Product{
   category Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
   subCategoryId String?
   subCategory SubCategory? @relation("SubCategoryToProduct", fields: [subCategoryId], references: [id])
+  saleId String?
+  sale Sale? @relation("SaleToProduct", fields: [saleId], references: [id])
   brandId String?
   brand Brand? @relation("BrandToProduct", fields: [brandId], references: [id])
   name String
@@ -137,6 +139,7 @@ model Sale{
   storeId     String @unique
   store       Store @relation(fields: [storeId], references: [id])
   name        String
+  products    Product[] @relation("SaleToProduct")
   description String?
   imageUrl    String?
   active      Boolean
