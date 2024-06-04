@@ -1,21 +1,10 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
-import { Edit, Plus } from "lucide-react"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
-import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
-import { CellAction } from "./cell-action"
 import { SaleForm } from "./sale-form"
 import { Sale } from "@prisma/client"
 
@@ -45,9 +34,6 @@ export const SaleClient: React.FC<SaleClientProps> = ({
               <div className="h-3 w-3 rounded-full bg-red-600"></div>
               disabled
             </div>
-            <Button >
-            Activate
-          </Button>
           </>
           ) : (
             <>
@@ -55,16 +41,10 @@ export const SaleClient: React.FC<SaleClientProps> = ({
               <div className="h-3 w-3 rounded-full bg-green-600"></div>
               Active
             </div>
-            <Button >
-            Desative
-          </Button>
+
           </>
           )}
           
-          <Button onClick={() => router.push(`/${params.storeId}/brands/new`)}>
-            <Edit className="mr-2 h-4 w-4"/>
-            Edit
-          </Button>
         </div>
       </div>
       <Separator />

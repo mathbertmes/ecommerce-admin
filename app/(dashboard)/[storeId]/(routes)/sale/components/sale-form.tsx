@@ -6,19 +6,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Sale } from "@prisma/client"
-import { Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
 import ImageUpload from "@/components/ui/image-upload";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SaleFormPorps{
   initialData: Sale | null
@@ -56,9 +54,7 @@ export const SaleForm: React.FC<SaleFormPorps> = ({
   const onSubmit = async (data: SaleFormValues) => {
     try{
       setLoading(true)
-      console.log("on submit")
-      console.log(data)
-      await axios.patch(`/api/stores/${params.storeId}`, data)
+      await axios.patch(`/api/${params.storeId}/sale/${initialData?.id}`, data)
       router.refresh()
       toast.success("Store updated")
     }catch (error){
@@ -77,7 +73,6 @@ export const SaleForm: React.FC<SaleFormPorps> = ({
       onConfirm={() => {}}
       loading={loading}
     />
-      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
         <FormField 
@@ -86,6 +81,7 @@ export const SaleForm: React.FC<SaleFormPorps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Background image</FormLabel>
+                  
                   <FormControl>
                     <ImageUpload 
                       value={field.value ? [field.value] : []}
@@ -125,6 +121,29 @@ export const SaleForm: React.FC<SaleFormPorps> = ({
                 </FormItem>
               )}
             />
+            <FormField 
+                control={form.control} 
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox 
+                        checked={field.value} 
+                        // @ts-ignore
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Active
+                      </FormLabel>
+                      <FormDescription>
+                        When activated willl generate a sale page with all products with discount
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             Save changes
@@ -132,11 +151,7 @@ export const SaleForm: React.FC<SaleFormPorps> = ({
         </form>
       </Form>
       <Separator />
-      <ApiAlert
-       title="NEXT_PUBLIC_API_URL" 
-       description={`${origin}/api/${params.storeId}`} 
-       variant="public"
-      />
+     
     </>
   )
 }
