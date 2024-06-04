@@ -18,10 +18,9 @@ export async function GET(
         id: params.productId,
       },
       include: {
+        stock: true,
         images: true,
-        category: true,
-        size: true,
-        color: true,       
+        category: true,      
       }
     });
   
@@ -44,9 +43,10 @@ export async function PATCH(
       name,
       price,
       categoryId,
-      colorId,
-      sizeId,
       images,
+      subCategoryId,
+      brandId,
+      stock,
       isFeatured,
       isArchived,
     } = body
@@ -63,20 +63,16 @@ export async function PATCH(
       return new NextResponse("Images are required", {status : 400})
     }
 
+    if(!stock || !stock.length){
+      return new NextResponse("Stock is required", {status : 400})
+    }
+
     if(!price){
       return new NextResponse("Price is required", {status : 400})
     }
 
     if(!categoryId){
       return new NextResponse("Category id is required", {status : 400})
-    }
-
-    if(!sizeId){
-      return new NextResponse("Size id is required", {status : 400})
-    }
-
-    if(!colorId){
-      return new NextResponse("Color id is required", {status : 400})
     }
 
     if (!params.productId) {
@@ -102,8 +98,11 @@ export async function PATCH(
         name,
         price,
         categoryId,
-        colorId,
-        sizeId,
+        subCategoryId,
+        brandId,
+        stock : {
+          deleteMany: {}
+        },
         images: {
           deleteMany: {}
         },
@@ -117,6 +116,13 @@ export async function PATCH(
         id: params.productId
       },
       data: {
+        stock : {
+          createMany: {
+            data: [
+              ...stock.map((sizeStock: { value: string, amount: number }) => sizeStock)
+            ]
+          }
+        },
         images: {
           createMany: {
             data: [

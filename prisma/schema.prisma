@@ -11,17 +11,18 @@ datasource db {
 }
 
 model Store {
-  id         String    @id @default(uuid())
-  name       String 
-  userId     String
-  billboards Billboard[] @relation("StoreToBillboard")
-  categories Category[] @relation("StoreToCategory")
-  sizes      Size[] @relation("StoreToSize")
-  colors     Color[] @relation("StoreToColor")
-  products   Product[] @relation("StoreToProduct")
-  orders     Order[] @relation("StoreToOrder")
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  name            String 
+  userId          String
+  billboards      Billboard[] @relation("StoreToBillboard")
+  categories      Category[] @relation("StoreToCategory")
+  subcategories   SubCategory[] @relation("StoreToSubCategory")
+  products        Product[] @relation("StoreToProduct")
+  brands          Brand[] @relation("StoreToBrand")
+  sale            Sale?
+  orders          Order[] @relation("StoreToOrder")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Billboard {
@@ -42,31 +43,32 @@ model Category {
   billboardId String
   billboard   Billboard @relation(fields: [billboardId], references: [id])
   products    Product[] @relation("CategoryToProduct")
+  subCategories SubCategory[] @relation("CategoryToSubCategory")
   name        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Size{
-  id String @id @default(uuid())
-  storeId String
-  store Store @relation("StoreToSize", fields: [storeId], references: [id])
-  name String
-  value String
-  products Product[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model SubCategory {
+  id          String @id @default(uuid())
+  storeId     String 
+  store       Store @relation("StoreToSubCategory", fields: [storeId], references: [id])
+  categoryId  String
+  category    Category @relation("CategoryToSubCategory", fields: [categoryId], references: [id])
+  products    Product[] @relation("SubCategoryToProduct")
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-model Color{
-  id String @id @default(uuid())
-  storeId String
-  store Store @relation("StoreToColor", fields: [storeId], references: [id])
-  name String
-  value String
-  products Product[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Brand{
+  id          String @id @default(uuid())
+  storeId     String 
+  store       Store @relation("StoreToBrand", fields: [storeId], references: [id])
+  products    Product[] @relation("BrandToProduct")
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Product{
@@ -75,20 +77,32 @@ model Product{
   store Store @relation("StoreToProduct", fields: [storeId], references: [id])
   categoryId String
   category Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  subCategoryId String?
+  subCategory SubCategory? @relation("SubCategoryToProduct", fields: [subCategoryId], references: [id])
+  brandId String?
+  brand Brand? @relation("BrandToProduct", fields: [brandId], references: [id])
   name String
   price Decimal
+  discount Boolean @default(false)
+  discountPrice Decimal?
   isFeatured Boolean @default(false)
   isArchived Boolean @default(false)
-  sizeId String
-  size Size @relation(fields: [sizeId], references: [id])
-  colorId String
-  color Color @relation(fields: [colorId], references: [id])
+  stock SizeStock[]
   images Image[]
   orderItems OrderItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model SizeStock{
+  id          String @id @default(uuid())
+  productId   String
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  value       String
+  amount      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 model Image{
   id String @id @default(uuid())
   productId String
@@ -116,4 +130,14 @@ model OrderItem{
   order Order @relation(fields: [orderId], references: [id])
   productId String 
   product Product @relation(fields: [productId], references: [id])
+}
+
+model Sale{
+  id          String @id @default(uuid())
+  storeId     String @unique
+  store       Store @relation(fields: [storeId], references: [id])
+  name        String
+  description String?
+  imageUrl    String?
+  active      Boolean
 }

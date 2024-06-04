@@ -15,9 +15,10 @@ export async function POST(
       name,
       price,
       categoryId,
-      colorId,
-      sizeId,
       images,
+      subCategoryId,
+      brandId,
+      stock,
       isFeatured,
       isArchived,
     } = body
@@ -34,20 +35,16 @@ export async function POST(
       return new NextResponse("Images are required", {status : 400})
     }
 
+    if(!stock || !stock.length){
+      return new NextResponse("Stock is required", {status : 400})
+    }
+
     if(!price){
       return new NextResponse("Price is required", {status : 400})
     }
 
     if(!categoryId){
       return new NextResponse("Category id is required", {status : 400})
-    }
-
-    if(!sizeId){
-      return new NextResponse("Size id is required", {status : 400})
-    }
-
-    if(!colorId){
-      return new NextResponse("Color id is required", {status : 400})
     }
 
     if(!params.storeId){
@@ -72,9 +69,16 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        colorId,
-        sizeId,
         storeId: params.storeId,
+        subCategoryId,
+        brandId,
+        stock : {
+          createMany: {
+            data: [
+              ...stock.map((sizeStock: { value: string, amount: number }) => sizeStock)
+            ]
+          }
+        },
         images: {
           createMany: {
             data: [
@@ -112,16 +116,13 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        colorId,
-        sizeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false
       },
       include : {
         images: true,
         category: true,
-        color: true,
-        size: true,
+        stock: true
       },
       orderBy:{
         createdAt: 'desc'

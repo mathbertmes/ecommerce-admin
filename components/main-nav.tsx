@@ -28,19 +28,24 @@ export function MainNav({
       active: pathname === `/${params.storeId}/categories`
     },
     {
-      href: `/${params.storeId}/sizes`,
-      label: 'Sizes',
-      active: pathname === `/${params.storeId}/sizes`
-    },
-    {
-      href: `/${params.storeId}/colors`,
-      label: 'Colors',
-      active: pathname === `/${params.storeId}/colors`
+      href: `/${params.storeId}/subcategories`,
+      label: 'Sub Categories',
+      active: pathname === `/${params.storeId}/subcategories`
     },
     {
       href: `/${params.storeId}/products`,
       label: 'Products',
       active: pathname === `/${params.storeId}/products`
+    },
+    {
+      href: `/${params.storeId}/brands`,
+      label: 'Brands',
+      active: pathname === `/${params.storeId}/brands`
+    },
+    {
+      href: `/${params.storeId}/sale`,
+      label: 'Sale',
+      active: pathname === `/${params.storeId}/sale`
     },
     {
       href: `/${params.storeId}/orders`,
@@ -60,6 +65,7 @@ export function MainNav({
     >
       {routes.map((route) => (
         <Link
+          prefetch={true}
           key={route.href}
           href={route.href}
           className={cn(
