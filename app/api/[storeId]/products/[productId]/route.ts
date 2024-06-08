@@ -47,6 +47,8 @@ export async function PATCH(
       subCategoryId,
       brandId,
       stock,
+      discount,
+      discountPrice,
       isFeatured,
       isArchived,
     } = body
@@ -100,6 +102,8 @@ export async function PATCH(
         categoryId,
         subCategoryId,
         brandId,
+        discount,
+        discountPrice,
         stock : {
           deleteMany: {}
         },
