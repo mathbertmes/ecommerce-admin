@@ -14,35 +14,21 @@ export async function GET(
       return new NextResponse("Store ID is required", {status : 400})
     }
 
-    const categories = await prismadb.category.findMany({
+    const subcategories = await prismadb.subCategory.findMany({
       where: {
-        storeId : params.storeId,
           products: {
               some: {
                   discount: true,
                   isArchived: false,
               }
           }
-      },
-      include: {
-        subCategories: {
-          where: {
-            storeId : params.storeId,
-              products: {
-                  some: {
-                      discount: true,
-                      isArchived: false,
-                  }
-              }
-          }
-        }
       }
   });
 
-    return NextResponse.json(categories)
+    return NextResponse.json(subcategories)
 
   } catch(error) {
-    console.log("[CATEGORIES-DISCOUNT_GET]", error)
+    console.log("[SUBCATEGORIES-DISCOUNT_GET]", error)
     return new NextResponse("Internal Error", {status : 500})
   }
 }
