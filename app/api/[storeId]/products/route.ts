@@ -106,6 +106,7 @@ export async function GET(
     const { searchParams } = new URL(req.url)
     const categoryId = searchParams.get("categoryId") || undefined;
     const subcategoryId = searchParams.get("subcategoryId") || undefined;
+    const brandId = searchParams.get("brandId") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured")
@@ -117,6 +118,7 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
+        brandId,
         subCategoryId: subcategoryId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false
