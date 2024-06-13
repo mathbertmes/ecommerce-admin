@@ -107,6 +107,7 @@ export async function GET(
     const categoryId = searchParams.get("categoryId") || undefined;
     const subcategoryId = searchParams.get("subcategoryId") || undefined;
     const brandId = searchParams.get("brandId") || undefined;
+    const discount = searchParams.get("discount");
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured")
@@ -120,6 +121,7 @@ export async function GET(
         categoryId,
         brandId,
         subCategoryId: subcategoryId,
+        discount: discount ? true : undefined,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false
       },
