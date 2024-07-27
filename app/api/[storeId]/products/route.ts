@@ -108,7 +108,7 @@ export async function GET(
     const subcategoryId = searchParams.get("subcategoryId") || undefined;
     const brandId = searchParams.get("brandId") || undefined;
     const discount = searchParams.get("discount");
-    const sizeValue = searchParams.get("sizeValue") || undefined;
+    const sizeValue = searchParams.getAll("sizeValue") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured")
@@ -127,7 +127,9 @@ export async function GET(
         isArchived: false,
         stock: {
           some:{
-            value: sizeValue
+            value: {
+              in: sizeValue.length > 0 ? sizeValue : undefined
+            }
           }
         }
       },
