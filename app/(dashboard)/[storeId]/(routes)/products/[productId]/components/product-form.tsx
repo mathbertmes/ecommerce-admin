@@ -35,7 +35,7 @@ const formSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   stock: z.object({
     value: z.string().min(1, "Size is required"),
-    amount: z.coerce.number().min(1, "Amount is required")
+    amount: z.coerce.number().min(0, "Min 0")
   }).array().min(1, "Stock must contain at least 1 size"),
   subCategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),

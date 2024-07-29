@@ -39,18 +39,24 @@ export async function POST(
     }
   })
 
-  const products = await prismadb.product.findMany({
-    where: {
-      id: {
-        in: productIds
-      },
-      stock: {
-        some:{
-          id: {
-            in: sizeStockIds
-          }
-        }
-      }
+  // const products = await prismadb.product.findMany({
+  //   where: {
+  //     id: {
+  //       in: productIds
+  //     },
+  //     stock: {
+  //       some:{
+  //         id: {
+  //           in: sizeStockIds
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+
+  productsForSize.forEach((product) => {
+    if(product.amount < 1){
+      return new NextResponse("Product out of stock", { status: 400 })
     }
   })
 
