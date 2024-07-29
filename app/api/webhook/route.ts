@@ -53,16 +53,18 @@ export async function POST(req: Request){
 
     //REMOVE FROM STOCK
 
-    const productIds = order.orderItems.map((orderItem) => orderItem.productId)
+    const sizeStockIds = order.orderItems.map((orderItem) => orderItem.sizeStockId)
 
-    await prismadb.product.updateMany({
+    await prismadb.sizeStock.updateMany({
       where: {
         id: {
-          in: [...productIds]
+          in: [...sizeStockIds]
         }
-      }, 
+      },
       data: {
-        isArchived: true
+        amount  : {
+          decrement : 1
+        }
       }
     })
   }

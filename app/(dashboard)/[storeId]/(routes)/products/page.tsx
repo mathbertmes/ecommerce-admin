@@ -34,8 +34,8 @@ const ProductsPage = async ({
     category: item.category.name,
     subCategory: item.subCategory?.name ? item.subCategory?.name : "None",
     brand: item.brand?.name ? item.brand?.name : "None",
-    createdAt: format(item.createdAt, "MMMM do, yyyy")
-
+    createdAt: format(item.createdAt, "MMMM do, yyyy"),
+    discount: item.discount
   }))
 
   return(

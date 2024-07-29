@@ -40,7 +40,7 @@ const formSchema = z.object({
   subCategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
   discount: z.boolean().default(false),
-  discountPrice: z.coerce.number().min(0.01, "Discount price is required").optional().nullable(),
+  discountPrice: z.coerce.number().optional().nullable(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional()
 });
@@ -91,6 +91,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       data.brandId = data.brandId?.trim() || null;
       data.subCategoryId = data.subCategoryId?.trim() || null;
 
+      console.log(data)
       setLoading(true);
       if (initialData) {
         await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data);

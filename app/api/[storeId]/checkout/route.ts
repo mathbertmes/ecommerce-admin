@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
 import prismadb from "@/lib/prismadb"
 import { url } from "inspector"
+import { SizeStock } from "@prisma/client"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin" : "*",
@@ -21,31 +22,49 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ){
-  const { productIds } = await req.json();
+  const { productIds, sizeStockIds } = await req.json();
 
   if(!productIds || productIds.length === 0){
     return new NextResponse("Product ids are required", { status: 400 })
   }
 
+  const productsForSize = await prismadb.sizeStock.findMany({
+    where: {
+      id: {
+        in: sizeStockIds
+      },
+    },
+    include: {
+      product : true
+    }
+  })
+
   const products = await prismadb.product.findMany({
     where: {
       id: {
         in: productIds
+      },
+      stock: {
+        some:{
+          id: {
+            in: sizeStockIds
+          }
+        }
       }
     }
   })
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = []
 
-  products.forEach((product) => {
+  productsForSize.forEach((size) => {
     line_items.push({
       quantity: 1,
       price_data: {
         currency: 'USD',
         product_data : {
-          name: product.name
+          name: size.product.name
         },
-        unit_amount: product.price.toNumber() * 100
+        unit_amount: size.product.discountPrice ? size.product.discountPrice.toNumber() * 100 : size.product.price.toNumber() * 100
       }
     })
   })
@@ -55,12 +74,13 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItems : {
-        create: productIds.map((productId: string) => ({
+        create: productsForSize.map((productId: SizeStock) => ({
           product: {
             connect: {
-              id: productId
+              id: productId.productId,
             }
-          }
+          },
+          sizeStockId: productId.id
         }))
       }
     }
