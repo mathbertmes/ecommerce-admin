@@ -17,7 +17,11 @@ const OrdersPage = async ({
     include: {
       orderItems: {
         include: {
-          product: true
+          sizeStock: {
+            include: {
+              product : true
+            }
+          }
         }
       }
     },
@@ -30,9 +34,14 @@ const OrdersPage = async ({
     id: item.id,
     phone: item.phone,
     address: item.address,
-    products: item.orderItems.map((orderItem) => orderItem.product.name).join(', '),
+    products: item.orderItems.map((orderItem) => orderItem.sizeStock.product.name).join(', '),
     totalPrice: formatter.format(item.orderItems.reduce((total, item) => {
-      return total + Number(item.product.price)
+      if(item.sizeStock.product.discountPrice){
+        return total + Number(item.sizeStock.product.discountPrice)
+      }else{
+        return total + Number(item.sizeStock.product.price)
+      }
+      
     }, 0)),
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, "MMMM do, yyyy")

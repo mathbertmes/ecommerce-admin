@@ -93,7 +93,6 @@ model Product{
   isArchived Boolean @default(false)
   stock SizeStock[]
   images Image[]
-  orderItems OrderItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -102,6 +101,7 @@ model SizeStock{
   id          String @id @default(uuid())
   productId   String
   product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
   value       String
   amount      Int
   createdAt DateTime @default(now())
@@ -132,9 +132,9 @@ model OrderItem{
   id String @id @default(uuid())
   orderId String
   order Order @relation(fields: [orderId], references: [id])
-  productId String 
-  product Product @relation(fields: [productId], references: [id])
   sizeStockId String
+  sizeStock SizeStock @relation( fields: [sizeStockId], references: [id])
+  itemPrice  Decimal
 }
 
 model Sale{

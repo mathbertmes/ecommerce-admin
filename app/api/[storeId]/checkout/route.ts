@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
 import prismadb from "@/lib/prismadb"
 import { url } from "inspector"
-import { SizeStock } from "@prisma/client"
+import { Product, SizeStock } from "@prisma/client"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin" : "*",
@@ -37,6 +37,10 @@ export async function POST(
     include: {
       product : true
     }
+  })
+
+  productsForSize.forEach(product => {
+    product.product
   })
 
   // const products = await prismadb.product.findMany({
@@ -80,13 +84,13 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItems : {
-        create: productsForSize.map((productId: SizeStock) => ({
-          product: {
+        create: productsForSize.map((product) => ({
+          sizeStock: {
             connect: {
-              id: productId.productId,
+              id: product.id,
             }
           },
-          sizeStockId: productId.id
+          itemPrice: product.product.discountPrice ? product.product.discountPrice : product.product.price
         }))
       }
     }
