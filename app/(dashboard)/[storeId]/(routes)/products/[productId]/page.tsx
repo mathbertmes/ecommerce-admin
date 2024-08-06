@@ -12,7 +12,11 @@ const ProductPage = async ({
     },
     include : {
       images: true,
-      stock: true,
+      stock: {
+        include : {
+          orderItems : true
+        }
+      }
     }
   })
 
