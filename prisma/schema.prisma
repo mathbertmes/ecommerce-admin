@@ -1,13 +1,17 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator client {
-  provider = "prisma-client-js"
-}
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model Store {
@@ -89,7 +93,6 @@ model Product{
   isArchived Boolean @default(false)
   stock SizeStock[]
   images Image[]
-  orderItems OrderItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -98,6 +101,7 @@ model SizeStock{
   id          String @id @default(uuid())
   productId   String
   product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
   value       String
   amount      Int
   createdAt DateTime @default(now())
@@ -128,9 +132,9 @@ model OrderItem{
   id String @id @default(uuid())
   orderId String
   order Order @relation(fields: [orderId], references: [id])
-  productId String 
-  product Product @relation(fields: [productId], references: [id])
   sizeStockId String
+  sizeStock SizeStock @relation( fields: [sizeStockId], references: [id])
+  itemPrice  Decimal
 }
 
 model Sale{

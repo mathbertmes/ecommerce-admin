@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
 import prismadb from "@/lib/prismadb"
 import { url } from "inspector"
-import { SizeStock } from "@prisma/client"
+import { Product, SizeStock } from "@prisma/client"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin" : "*",
@@ -39,18 +39,28 @@ export async function POST(
     }
   })
 
-  const products = await prismadb.product.findMany({
-    where: {
-      id: {
-        in: productIds
-      },
-      stock: {
-        some:{
-          id: {
-            in: sizeStockIds
-          }
-        }
-      }
+  productsForSize.forEach(product => {
+    product.product
+  })
+
+  // const products = await prismadb.product.findMany({
+  //   where: {
+  //     id: {
+  //       in: productIds
+  //     },
+  //     stock: {
+  //       some:{
+  //         id: {
+  //           in: sizeStockIds
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+
+  productsForSize.forEach((product) => {
+    if(product.amount < 1){
+      return new NextResponse("Product out of stock", { status: 400 })
     }
   })
 
@@ -74,13 +84,13 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItems : {
-        create: productsForSize.map((productId: SizeStock) => ({
-          product: {
+        create: productsForSize.map((product) => ({
+          sizeStock: {
             connect: {
-              id: productId.productId,
+              id: product.id,
             }
           },
-          sizeStockId: productId.id
+          itemPrice: product.product.discountPrice ? product.product.discountPrice : product.product.price
         }))
       }
     }

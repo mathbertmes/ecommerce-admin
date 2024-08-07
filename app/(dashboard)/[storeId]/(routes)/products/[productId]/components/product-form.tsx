@@ -19,6 +19,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SizeStockModal } from "@/components/modals/update-size-modal";
 
 
 interface ProductFormProps {
@@ -35,7 +36,7 @@ const formSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   stock: z.object({
     value: z.string().min(1, "Size is required"),
-    amount: z.coerce.number().min(1, "Amount is required")
+    amount: z.coerce.number().min(0, "Min 0")
   }).array().min(1, "Stock must contain at least 1 size"),
   subCategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
@@ -53,8 +54,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   brands
 }) => {
 
+  console.log(initialData)
+
   const [subCategoriesAvailable, setSubCategoriesAvailable] = useState<SubCategory[]>([]);
   const [open, setOpen] = useState(false);
+  const [openSizeModal, setOpenSizeModal] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const params = useParams();
@@ -122,6 +126,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
+  const handleSaveSizeStock = () => {
+    setOpenSizeModal(false)
+  }
+
   useEffect(() => {
     if (initialData) {
       handleCategoryChange(initialData.categoryId);
@@ -150,6 +158,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onConfirm={onDelete}
         loading={loading}
       />
+      <SizeStockModal 
+      isOpen={openSizeModal}
+      onClose={() => setOpenSizeModal(false)}
+      onConfirm={onDelete}
+      loading={loading}
+    />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (

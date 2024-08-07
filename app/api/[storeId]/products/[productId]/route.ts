@@ -104,9 +104,7 @@ export async function PATCH(
         brandId,
         discount,
         discountPrice,
-        stock : {
-          deleteMany: {}
-        },
+        //STOCK LOGIC CHANGES
         images: {
           deleteMany: {}
         },
@@ -120,13 +118,6 @@ export async function PATCH(
         id: params.productId
       },
       data: {
-        stock : {
-          createMany: {
-            data: [
-              ...stock.map((sizeStock: { value: string, amount: number }) => sizeStock)
-            ]
-          }
-        },
         images: {
           createMany: {
             data: [

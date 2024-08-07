@@ -38,7 +38,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {formatter.format(totalRevenue)}
+                {totalRevenue}
               </div>
             </CardContent>
           </Card>
@@ -51,7 +51,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                +{salesCount}
+                {salesCount}
               </div>
             </CardContent>
           </Card>
