@@ -59,6 +59,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [subCategoriesAvailable, setSubCategoriesAvailable] = useState<SubCategory[]>([]);
   const [open, setOpen] = useState(false);
   const [openSizeModal, setOpenSizeModal] = useState(false);
+  const [sizeStockSelected, setSizeStockSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   
   const params = useParams();
@@ -145,6 +146,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
+  const handleSizeStockUpdate = () => {
+    
+  }
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "stock"
@@ -163,6 +168,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       onClose={() => setOpenSizeModal(false)}
       onConfirm={onDelete}
       loading={loading}
+      initialData={sizeStockSelected}
     />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
@@ -457,7 +463,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             <Button
                               type="button"
                               variant="outline"
-                              onClick={() => setOpenSizeModal(true)}
+                              onClick={() => handleSizeStockUpdate()}
                             >
                               Update
                             </Button>
