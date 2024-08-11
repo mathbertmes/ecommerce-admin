@@ -6,6 +6,8 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import { SizeStock } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface SizeStockModalProps{
   isOpen: boolean;
@@ -15,11 +17,14 @@ interface SizeStockModalProps{
   initialData: SizeStock | null;
 }
 
+
+
 export const SizeStockModal: React.FC<SizeStockModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  loading
+  loading,
+  initialData
 }) => {
   const [isMounted, setIsMounted] = useState(false)
 
@@ -30,6 +35,7 @@ export const SizeStockModal: React.FC<SizeStockModalProps> = ({
   if(!isMounted) {
     return null;
   }
+
 
   return(
     <Modal
@@ -43,7 +49,7 @@ export const SizeStockModal: React.FC<SizeStockModalProps> = ({
           <Input />
         </div>
         <div>
-        <Input />
+        <Input required/>
         </div>
       </div>
       <div className="pt-6 space-x-2 flex items-center justify-end w-full">
