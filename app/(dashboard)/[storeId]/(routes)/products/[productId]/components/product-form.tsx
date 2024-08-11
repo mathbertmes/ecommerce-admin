@@ -445,13 +445,24 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 </FormItem>
                               )}
                             />
-                            <Button
+                            {!initialData ?
+                              <Button
                               type="button"
                               variant="destructive"
                               onClick={() => remove(index)}
                             >
                               Remove
                             </Button>
+                            : 
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => remove(index)}
+                            >
+                              Update
+                            </Button>
+                            }
+                            
                           </div>
                         ))}
                       </div>
