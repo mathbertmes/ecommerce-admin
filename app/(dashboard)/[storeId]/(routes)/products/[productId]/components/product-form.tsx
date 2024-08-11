@@ -457,7 +457,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             <Button
                               type="button"
                               variant="outline"
-                              onClick={() => remove(index)}
+                              onClick={() => setOpenSizeModal(true)}
                             >
                               Update
                             </Button>
