@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
+import { SizeStock } from "@prisma/client";
 
 interface SizeStockModalProps{
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   loading: boolean;
+  initialData: SizeStock | null;
 }
 
 export const SizeStockModal: React.FC<SizeStockModalProps> = ({
@@ -31,14 +33,18 @@ export const SizeStockModal: React.FC<SizeStockModalProps> = ({
 
   return(
     <Modal
-      title="Are you sure?"
+      title="Update stock"
       description="This action cannot be undone."
       isOpen={isOpen}
       onClose={onClose}
     >
       <div className="flex w-full justify-between">
+        <div>
+          <Input />
+        </div>
+        <div>
         <Input />
-        <Input />
+        </div>
       </div>
       <div className="pt-6 space-x-2 flex items-center justify-end w-full">
         <Button disabled={loading} variant="outline" onClick={onClose}>
