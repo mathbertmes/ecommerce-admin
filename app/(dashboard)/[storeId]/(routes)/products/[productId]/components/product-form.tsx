@@ -37,7 +37,7 @@ const formSchema = z.object({
   stock: z.object({
     value: z.string().min(1, "Size is required"),
     amount: z.coerce.number().min(0, "Min 0")
-  }).array().min(1, "Stock must contain at least 1 size"),
+  }).array().min(0, "Stock must contain at least 1 size"),
   subCategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
   discount: z.boolean().default(false),
@@ -56,8 +56,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const [subCategoriesAvailable, setSubCategoriesAvailable] = useState<SubCategory[]>([]);
   const [open, setOpen] = useState(false);
-  const [openSizeModal, setOpenSizeModal] = useState(false);
-  const [sizeStockSelected, setSizeStockSelected] = useState(null);
+
   const [loading, setLoading] = useState(false);
   
   const params = useParams();
@@ -125,9 +124,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
-  const handleSaveSizeStock = () => {
-    setOpenSizeModal(false)
-  }
 
   useEffect(() => {
     if (initialData) {
@@ -143,12 +139,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       console.error("Failed to fetch subcategories", error);
     }
   };
-
-  const handleSizeStockUpdate = (fieldItem : any) => {
-    setSizeStockSelected(fieldItem)
-    setOpenSizeModal(true)
-  }
-
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "stock"
@@ -162,13 +152,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onConfirm={onDelete}
         loading={loading}
       />
-      <SizeStockModal 
-      isOpen={openSizeModal}
-      onClose={() => setOpenSizeModal(false)}
-      onConfirm={onDelete}
-      loading={loading}
-      initialData={sizeStockSelected}
-    />
+      
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -404,80 +388,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         This product will not appear anywhere in the store
                       </FormDescription>
                     </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="col-span-1 space-y-8">
-              <FormField 
-                control={form.control} 
-                name="stock"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Stock</FormLabel>
-                    <FormControl>
-                      <div className="space-y-4">
-                        {fields.map((fieldItem, index) => (
-                          <div key={fieldItem.id} className="flex items-start space-x-4">
-                            <FormField
-                              control={form.control}
-                              name={`stock.${index}.value`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input
-                                      placeholder="Size"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name={`stock.${index}.amount`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input
-                                      type="number"
-                                      placeholder="Amount"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            {!initialData ?
-                              <Button
-                              type="button"
-                              variant="destructive"
-                              onClick={() => remove(index)}
-                            >
-                              Remove
-                            </Button>
-                            : 
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => handleSizeStockUpdate(fieldItem)}
-                            >
-                              Update
-                            </Button>
-                            }
-                            
-                          </div>
-                        ))}
-                      </div>
-                    </FormControl>
-                    <Button type="button" onClick={() => append({ value: '', amount: 0 })}>
-                      Add Stock
-                    </Button>
-                    {fieldState.error && !fields.length && (
-                      <FormMessage>{fieldState.error.message}</FormMessage>
-                    )}
                   </FormItem>
                 )}
               />
