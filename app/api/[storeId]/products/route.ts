@@ -35,10 +35,6 @@ export async function POST(
       return new NextResponse("Images are required", {status : 400})
     }
 
-    if(!stock || !stock.length){
-      return new NextResponse("Stock is required", {status : 400})
-    }
-
     if(!price){
       return new NextResponse("Price is required", {status : 400})
     }
@@ -72,13 +68,7 @@ export async function POST(
         storeId: params.storeId,
         subCategoryId,
         brandId,
-        stock : {
-          createMany: {
-            data: [
-              ...stock.map((sizeStock: { value: string, amount: number }) => sizeStock)
-            ]
-          }
-        },
+        stock : undefined,
         images: {
           createMany: {
             data: [
