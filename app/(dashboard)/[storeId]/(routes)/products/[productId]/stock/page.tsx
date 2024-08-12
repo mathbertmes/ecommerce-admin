@@ -12,30 +12,26 @@ const ProductStockPage = async ({
 }: {
   params: { productId: string; storeId: string };
 }) => {
-  const product = await prismadb.product.findUnique({
+  const stock = await prismadb.sizeStock.findMany({
     where: {
-      id: params.productId,
+      productId : params.productId,
     },
     include: {
-      images: true,
-      stock: {
-        include: {
-          orderItems: true,
-        },
-      },
-    },
+      orderItems : true
+    }
   });
+
   return (
       <div className='flex-col'>
         <div className='flex-1 space-y-4 p-8 pt-6'>
           <div className='flex items-center justify-between'>
             <Heading
-              title={`${product!.name} stock`}
+              title={`stock`}
               description='Manage your product`s stock'
             />
           </div>
           <Separator />
-          <SizeStockClient data={product?.stock}/>
+          <SizeStockClient data={stock}/>
         </div>
       </div>
   );
