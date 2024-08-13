@@ -10,6 +10,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface SizeStockModalProps {
   isOpen: boolean;
@@ -31,6 +34,8 @@ export const SizeStockModal: React.FC<SizeStockModalProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const params = useParams()
+  const router = useRouter()
 
   const form = useForm<SizeStockValues>({
     resolver: zodResolver(sizeStockFormSchema),
@@ -47,6 +52,28 @@ export const SizeStockModal: React.FC<SizeStockModalProps> = ({
 
   const onSubmit = async (data: SizeStockValues) => {
     console.log(data);
+    let formattedData;
+    if(initialData){
+      //TODO
+    }else{
+      formattedData = {
+        value : data.value,
+        amount : data.amount,
+        productId : params.productId
+      }
+    }
+    try{
+      setLoading(true)
+      await axios.post(`/api/${params.storeId}/sizeStock`, formattedData)
+      router.refresh()
+      toast.success("SUCCESS")
+    }catch(error){
+      console.log(error);
+      toast.error("Something went wrong");
+    }finally{
+      setLoading(false);
+      onClose()
+    }
   };
 
   useEffect(() => {
