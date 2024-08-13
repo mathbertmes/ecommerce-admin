@@ -12,6 +12,13 @@ const ProductStockPage = async ({
 }: {
   params: { productId: string; storeId: string };
 }) => {
+  const product = await prismadb.product.findUnique({
+    where: {
+      id: params.productId,
+    },
+
+  });
+
   const stock = await prismadb.sizeStock.findMany({
     where: {
       productId : params.productId,
@@ -20,20 +27,29 @@ const ProductStockPage = async ({
       orderItems : true
     }
   });
-
   return (
+    <>
+    {!product ? (
+      <div>
+        <h1>Product not found</h1>
+      </div>
+    ): (
+      
       <div className='flex-col'>
         <div className='flex-1 space-y-4 p-8 pt-6'>
           <div className='flex items-center justify-between'>
             <Heading
-              title={`stock`}
+              title={`${product?.name} stock`}
               description='Manage your product`s stock'
             />
           </div>
           <Separator />
-          <SizeStockClient data={stock}/>
+          <SizeStockClient product={product} data={stock}/>
         </div>
       </div>
+    )}
+      
+    </>
   );
 };
 
