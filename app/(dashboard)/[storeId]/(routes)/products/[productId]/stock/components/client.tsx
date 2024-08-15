@@ -13,11 +13,16 @@ interface SizeStockClientProps {
 const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [modalData, setModalData] = useState(null);
+  const [modalData, setModalData] = useState<SizeStock | null>(null);
 
   const handleOnClose = () => {
     setModalIsOpen(false)
     setModalData(null)
+  }
+
+  const handleOpenUpdateModal = (data: SizeStock) => {
+    setModalData(data)
+    setModalIsOpen(true)
   }
 
   return (
@@ -36,6 +41,11 @@ const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
                   <div>
                     <h3>Size {item.value}</h3>
                     <h3>Amount {item.amount}</h3>
+                  </div>
+                  <div>
+                    <Button onClick={() => handleOpenUpdateModal(item)}>
+                      Update
+                    </Button>
                   </div>
                 </div>
               ))}
