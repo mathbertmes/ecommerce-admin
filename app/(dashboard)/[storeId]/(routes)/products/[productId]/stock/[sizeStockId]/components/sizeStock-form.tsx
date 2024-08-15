@@ -57,14 +57,19 @@ export const SizeStockForm: React.FC<SizeStockFormPorps> = ({
   })
   
   const onSubmit = async (data: SizeStockFormValues) => {
+    const formattedData = {
+      value: data.value,
+      amount: data.amount,
+      productId: params.productId
+    }
     try{
       setLoading(true)
       if(initialData){
         await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
       }else{
-        await axios.post(`/api/${params.storeId}/categories`, data)
+        await axios.post(`/api/${params.storeId}/sizeStock`, formattedData)
       }
-      router.push(`/${params.storeId}/categories`)
+      router.push(`/${params.storeId}/products/${params.productId}/stock`)
       toast.success(toastMessage)
     }catch (error){
       console.log(error)
