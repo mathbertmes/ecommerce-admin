@@ -3,6 +3,7 @@
 import { SizeStockModal } from "@/components/modals/update-size-modal";
 import { Button } from "@/components/ui/button";
 import { Product, SizeStock } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface SizeStockClientProps {
@@ -11,22 +12,11 @@ interface SizeStockClientProps {
 }
 
 const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [modalData, setModalData] = useState(null);
-
-  const handleOnClose = () => {
-    setModalIsOpen(false)
-    setModalData(null)
-  }
+  const router = useRouter()
+  const params = useParams()
 
   return (
-    <>
-      <SizeStockModal
-        isOpen={modalIsOpen}
-        onClose={handleOnClose}
-        initialData={modalData}
-      />
+
       <div>
         <div>
           {data?.length ? (
@@ -36,6 +26,11 @@ const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
                   <div>
                     <h3>Size {item.value}</h3>
                     <h3>Amount {item.amount}</h3>
+                  </div>
+                  <div>
+                    <Button onClick={() => router.push(`/${params.storeId}/products/${params.productId}/stock/${item.id}`)}>
+                      Update
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -47,14 +42,13 @@ const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
         <div>
           <Button
             variant='default'
-            onClick={() => setModalIsOpen(true)}
+            onClick={() => router.push(`/${params.storeId}/products/${params.productId}/stock/new`)}
             className='bg-green-600'
           >
             Create new size
           </Button>
         </div>
       </div>
-    </>
   );
 };
 
