@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import prismadb from "@/lib/prismadb";
+import { format } from "date-fns"
 import { useState } from "react";
 import SizeStockClient from "./components/client";
+import { SizeStockColumn } from "./components/columns";
 
 const ProductStockPage = async ({
   params,
@@ -27,6 +29,14 @@ const ProductStockPage = async ({
       orderItems : true
     }
   });
+
+  const formattedSizeStocks: SizeStockColumn[] = stock.map((item) => ({
+    id: item.id,
+    value: item.value,
+    amount: item.amount,
+    orderItems: item.orderItems,
+
+  }))
   return (
     <>
     {!product ? (
@@ -35,17 +45,10 @@ const ProductStockPage = async ({
       </div>
     ): (
       
-      <div className='flex-col'>
-        <div className='flex-1 space-y-4 p-8 pt-6'>
-          <div className='flex items-center justify-between'>
-            <Heading
-              title={`${product?.name} stock`}
-              description='Manage your product`s stock'
-            />
-          </div>
-          <Separator />
-          <SizeStockClient product={product} data={stock}/>
-        </div>
+      <div className="flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <SizeStockClient product={product} data={formattedSizeStocks}/>
+      </div>
       </div>
     )}
       
