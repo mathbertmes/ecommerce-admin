@@ -24,8 +24,8 @@ const SizeStockClient: React.FC<SizeStockClientProps> = ({ data, product }) => {
     <>
     <div className="flex items-center justify-between">
       <Heading 
-        title={`Categories (${data.length})`}
-        description="Manage categories for your store"
+        title={`${product?.name} stock`}
+        description='Manage your product`s stock'
       />
       <Button onClick={() => router.push(`/${params.storeId}/products/${params.productId}/stock/new`)}>
         <Plus className="mr-2 h-4 w-4"/>
