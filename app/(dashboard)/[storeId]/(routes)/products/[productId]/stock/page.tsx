@@ -37,13 +37,7 @@ const ProductStockPage = async ({
       
       <div className='flex-col'>
         <div className='flex-1 space-y-4 p-8 pt-6'>
-          <div className='flex items-center justify-between'>
-            <Heading
-              title={`${product?.name} stock`}
-              description='Manage your product`s stock'
-            />
-          </div>
-          <Separator />
+          
           <SizeStockClient product={product} data={stock}/>
         </div>
       </div>
