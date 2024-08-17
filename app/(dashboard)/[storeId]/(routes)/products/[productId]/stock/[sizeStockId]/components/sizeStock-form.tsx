@@ -65,7 +65,7 @@ export const SizeStockForm: React.FC<SizeStockFormPorps> = ({
     try{
       setLoading(true)
       if(initialData){
-        await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
+        await axios.patch(`/api/${params.storeId}/sizeStock/${initialData.id}`, formattedData)
       }else{
         await axios.post(`/api/${params.storeId}/sizeStock`, formattedData)
       }
