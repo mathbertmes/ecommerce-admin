@@ -34,7 +34,7 @@ const ProductStockPage = async ({
     id: item.id,
     value: item.value,
     amount: item.amount,
-    orders: item.orderItems,
+    orderItems: item.orderItems,
 
   }))
   return (
