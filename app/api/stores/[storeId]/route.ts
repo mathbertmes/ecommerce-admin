@@ -66,11 +66,7 @@ export async function GET(
         },
         orders: {
           include: {
-            orderItems : {
-              include: {
-                product : true
-              }
-            }
+            orderItems : true
           }
         }
       }
