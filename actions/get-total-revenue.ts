@@ -6,17 +6,7 @@ export const getTotalRevenue = async (storeId: string) => {
       storeId,
     },
     include: {
-      orderItems: {
-        include: {
-          sizeStock : {
-            include: {
-              product: true
-            }
-            
-          }
-          
-        }
-      }
+      orderItems: true
     }
   })
 
