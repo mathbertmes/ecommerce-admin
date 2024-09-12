@@ -25,16 +25,14 @@ const ProductStockPage = async ({
     where: {
       productId : params.productId,
     },
-    include: {
-      orderItems : true
-    }
+    
   });
 
   const formattedSizeStocks: SizeStockColumn[] = stock.map((item) => ({
     id: item.id,
     value: item.value,
     amount: item.amount,
-    orderItems: item.orderItems,
+
 
   }))
   return (
