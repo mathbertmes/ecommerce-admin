@@ -55,3 +55,43 @@ export async function PATCH(
     return new NextResponse("Internal error", { status: 500 });
   }
 };
+
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string, sizeStockId: string } }
+) {
+  try {
+    const { userId } = auth();
+
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 403 });
+    }
+
+    if (!params.sizeStockId) {
+      return new NextResponse("Size stock id is required", { status: 400 });
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId
+      }
+    })
+
+    if(!storeByUserId){
+      return new NextResponse("Unauthorized", {status : 403})
+    }
+
+    const subCategory = await prismadb.sizeStock.deleteMany({
+      where: {
+        id: params.sizeStockId,
+      }
+    });
+  
+    return NextResponse.json(subCategory);
+  } catch (error) {
+    console.log('[SIZESTOCK_DELETE]', error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+};
