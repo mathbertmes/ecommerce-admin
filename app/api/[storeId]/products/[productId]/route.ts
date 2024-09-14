@@ -46,7 +46,6 @@ export async function PATCH(
       images,
       subCategoryId,
       brandId,
-      stock,
       discount,
       discountPrice,
       isFeatured,
@@ -63,10 +62,6 @@ export async function PATCH(
 
     if(!images || !images.length){
       return new NextResponse("Images are required", {status : 400})
-    }
-
-    if(!stock || !stock.length){
-      return new NextResponse("Stock is required", {status : 400})
     }
 
     if(!price){
