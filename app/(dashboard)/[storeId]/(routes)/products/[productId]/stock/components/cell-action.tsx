@@ -27,15 +27,38 @@ export const CellAction: React.FC<CellActionProps> = ({
   const router = useRouter()
   const params = useParams()
 
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id)
     toast.success("Size Id copied to the clipboard.")
   }
 
+  const onDelete = async () => {
+    try{
+      setLoading(true)
+      await axios.delete(`/api/${params.storeId}/sizeStock/${data.id}`).then(response => console.log(response))
+      router.push(`/${params.storeId}/products/${params.productId}/stock`)
+      toast.success("Size deleted")
+    } catch(error){
+      toast.error("Something went wrong!")
+    } finally{
+      setLoading(false)
+      setOpen(false)
+    }
+  }
+
 
   return(
     <>
+    <AlertModal 
+      isOpen={open}
+      onClose={() => setOpen(false)}
+      onConfirm={onDelete}
+      loading={loading}
+    />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -54,6 +77,10 @@ export const CellAction: React.FC<CellActionProps> = ({
           <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/products/${params.productId}/stock/${data.id}`)}>
             <Edit className="h-4 w-4 mr-2"/>
             Update
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpen(true)}>
+            <Trash className="h-4 w-4 mr-2"/>
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

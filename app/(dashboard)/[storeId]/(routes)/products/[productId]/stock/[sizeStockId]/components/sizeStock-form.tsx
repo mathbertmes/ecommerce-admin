@@ -82,11 +82,13 @@ export const SizeStockForm: React.FC<SizeStockFormPorps> = ({
   const onDelete = async () => {
     try{
       setLoading(true)
-      await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`)
-      router.push(`/${params.storeId}/categories`)
-      toast.success("Category deleted.")
+      await axios.delete(`/api/${params.storeId}/sizeStock/${initialData?.id}`).then(() => {
+        router.push(`/${params.storeId}/products/${params.productId}/stock`)
+        toast.success("Size deleted")
+      })
+      
     } catch(error){
-      toast.error("Make sure you removed all products using this category first.")
+      toast.error("Something went wrong!")
     } finally{
       setLoading(false)
       setOpen(false)

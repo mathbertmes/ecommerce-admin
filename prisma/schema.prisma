@@ -101,7 +101,6 @@ model SizeStock{
   id          String @id @default(uuid())
   productId   String
   product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
   value       String
   amount      Int
   createdAt DateTime @default(now())
@@ -133,7 +132,10 @@ model OrderItem{
   orderId String
   order Order @relation(fields: [orderId], references: [id])
   sizeStockId String
-  sizeStock SizeStock @relation( fields: [sizeStockId], references: [id])
+  productId String
+  productName String
+  productSize String
+  productImage String
   itemPrice  Decimal
 }
 

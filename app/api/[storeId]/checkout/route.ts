@@ -35,7 +35,11 @@ export async function POST(
       },
     },
     include: {
-      product : true
+      product : {
+        include: {
+          images: true
+        }
+      }
     }
   })
 
@@ -85,11 +89,11 @@ export async function POST(
       isPaid: false,
       orderItems : {
         create: productsForSize.map((product) => ({
-          sizeStock: {
-            connect: {
-              id: product.id,
-            }
-          },
+          sizeStockId: product.id,
+          productId: product.product.id,
+          productImage: product.product.images[0].url,
+          productName: product.product.name,
+          productSize: product.value,
           itemPrice: product.product.discountPrice ? product.product.discountPrice : product.product.price
         }))
       }
