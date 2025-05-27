@@ -88,14 +88,15 @@ export const SettingsForm: React.FC<SettingsFormPorps> = ({
           title="Settings"
           description="Manage store preferences"
         />
-        <Button
+        {/*DELETE STORE BUTTON */}
+        {/* <Button
           disabled={loading}
           variant="destructive"
           size="icon"
           onClick={() => setOpen(true)}
         >
           <Trash className="h-4 w-4"/>
-        </Button>
+        </Button> */}
       </div>
       <Separator />
       <Form {...form}>
